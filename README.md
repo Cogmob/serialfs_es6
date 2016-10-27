@@ -1,7 +1,7 @@
 Creates an object / string representation of a file system recursively. Useful
 for writing unit tests for a utility that modifies files.
 
-# USAGE
+# usage
 
 ```javascript
 const serialfs = require('serialfs');
