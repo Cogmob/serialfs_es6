@@ -1,8 +1,8 @@
 {
-  "name": "node_base",
-  "version": "0.0.0",
+  "name": "serialfs",
+  "version": "0.0.5",
   "description": "base repo for node projects",
-  "main": "index.js",
+  "main": "src/serialfs/serialfs.js",
   "scripts": {
     "test": "ava"
   },
@@ -24,6 +24,8 @@
     "gulp-babel": "^6.1.2",
     "gulp-debug": "^2.1.2",
     "gulp-sequence": "^0.4.6",
+    "js-yaml": "^3.6.1",
+    "npm-bump": "0.0.20",
     "tap": "^7.1.2",
     "tap-difflet": "^0.7.0",
     "tape": "^4.6.2"
@@ -35,5 +37,8 @@
     "tap": true,
     "verbose": true,
     "powerAssert": true
+  },
+  "dependencies": {
+    "js-yaml": "^3.6.1"
   }
 }
