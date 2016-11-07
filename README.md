@@ -3,6 +3,10 @@ for writing unit tests for a utility that modifies files.
 
 # usage
 
+```shell
+npm install --save serialfs
+```
+
 ```javascript
 const serialfs = require('serialfs');
 
