@@ -12,11 +12,13 @@ const obj = vargs((srcpath, options, cb) => {
         if (err) {
             return cb(err);}
         if (!stats.isDirectory()) {
+            console.log(srcpath);
             if (!options.contents) {
                 return cb(null, '');}
             return fs.readFile(srcpath, 'utf8', (err, res) => {
                 if (err) {
                     cb(err);}
+                console.log(res);
                 cb(null, res.toString());});}
         fs.readdir(srcpath, (err, files) => {
             if (err) {
