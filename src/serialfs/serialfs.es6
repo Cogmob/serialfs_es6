@@ -24,7 +24,7 @@ const obj = vargs((srcpath, options, cb) => {
                     options,
                     (err, content) => {
                         if (err) {
-                            return cb(err);}
+                            return reduce_cb(err);}
                         acc[basename] = content;
                         reduce_cb(null, acc);});}, cb);});});});
 
