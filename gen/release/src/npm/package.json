@@ -1,7 +1,7 @@
 {
   "name": "serialfs",
-  "version": "0.0.4",
-  "description": "base repo for node projects",
+  "version": "0.0.7",
+  "description": "creates an object / string representation of a file system",
   "main": "src/serialfs/serialfs.js",
   "scripts": {
     "test": "ava"
@@ -16,6 +16,7 @@
   "author": "cogmob",
   "license": "Apache-2.0",
   "devDependencies": {
+    "async": "^2.1.4",
     "ava": "^0.16.0",
     "babel-cli": "^6.16.0",
     "babel-preset-es2015": "^6.16.0",
@@ -28,7 +29,8 @@
     "npm-bump": "0.0.20",
     "tap": "^7.1.2",
     "tap-difflet": "^0.7.0",
-    "tape": "^4.6.2"
+    "tape": "^4.6.2",
+    "vargs-callback": "^0.2.4"
   },
   "ava": {
     "files": [

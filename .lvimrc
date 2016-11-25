@@ -1,4 +1,3 @@
 let root = expand('%:p:h')
-nmap <leader>j :wall<CR> :call VimuxRunCommand('cd ' . root . '/src/tools ; clear ; ./set_up.sh')<CR>
-nmap <leader>k :wall<CR> :call VimuxRunCommand('cd ' . root . '/src/tools ; clear ; ./build_dev.sh')<CR>
-nmap <leader>l :wall<CR> :call VimuxRunCommand('cd ' . root . '/src/tools ; clear ; ./test_dev.sh')<CR>
+nmap <leader>j :wall<CR> :call VimuxRunCommand('cd ' . root . '/src/tools ; clear ; ./build_dev.sh')<CR>
+nmap <leader>k :wall<CR> :call VimuxRunCommand('cd ' . root . '/src/tools ; clear ; ./test_dev.sh')<CR>

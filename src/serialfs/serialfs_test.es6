@@ -2,6 +2,14 @@ const test = require('tape');
 const serialfs = require('./serialfs');
 const path = require('path');
 
+test('test obj without contents', t => {
+    t.plan(1);
+    serialfs.obj(
+        path.resolve(__dirname, 'data'),
+        {contents: false},
+        (err, res) => {
+                t.deepEqual({ffff: ''}, res);});});
+
 test('test obj', t => {
     t.plan(1);
     serialfs.obj(path.resolve(__dirname, 'data'), (err, res) => {

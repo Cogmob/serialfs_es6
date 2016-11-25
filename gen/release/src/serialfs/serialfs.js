@@ -1,27 +1,54 @@
 'use strict';
 
+var async = require('async');
 var fs = require('fs');
 var path = require('path');
 var jsyaml = require('js-yaml');
+var vargs = require('vargs-callback');
 
-var obj = function obj(srcpath) {
-    var stats = fs.statSync(srcpath);
-
-    if (stats.isDirectory()) {
-        var files = fs.readdirSync(srcpath);
-        var f = function f(acc, basename) {
-            var content = obj(path.resolve(srcpath, basename));
-            acc[basename] = content;
-            return acc;
-        };
-        return files.reduce(f, {});
+var obj = vargs(function (srcpath, options, cb) {
+    if (!options) {
+        options = { contents: true };
     }
 
-    return fs.readFileSync(srcpath, 'utf8');
-};
+    fs.stat(srcpath, function (err, stats) {
+        if (err) {
+            return cb(err);
+        }
+        if (!stats.isDirectory()) {
+            if (!options.contents) {
+                return cb(null, '');
+            }
+            return fs.readFile(srcpath, 'utf8', cb);
+        }
+        fs.readdir(srcpath, function (err, files) {
+            if (err) {
+                return cb(err);
+            }
+            async.reduce(files, {}, function (acc, basename, reduce_cb) {
+                obj(path.resolve(srcpath, basename), options, function (err, content) {
+                    if (err) {
+                        return cb(err);
+                    }
+                    acc[basename] = content;
+                    reduce_cb(null, acc);
+                });
+            }, cb);
+        });
+    });
+});
 
-var yaml = function yaml(srcpath) {
-    return jsyaml.safeDump(obj(srcpath));
-};
+var yaml = vargs(function (srcpath, options, cb) {
+    if (!options) {
+        options = { contents: true };
+    }
+
+    obj(srcpath, options, function (err, res) {
+        if (err) {
+            return cb(err);
+        }
+        cb(null, jsyaml.safeDump(res));
+    });
+});
 
 module.exports = { obj: obj, yaml: yaml };

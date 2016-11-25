@@ -1,29 +1,40 @@
+const async = require('async');
 const fs = require('fs');
 const path = require('path');
 const jsyaml = require('js-yaml');
+const vargs = require('vargs-callback');
 
-const obj = srcpath =>
-{
-    const stats = fs.statSync(srcpath);
+const obj = vargs((srcpath, options, cb) => {
+    if (!options) {
+        options = {contents: true};}
 
-    if (stats.isDirectory())
-    {
-        const files = fs.readdirSync(srcpath);
-        const f = (acc, basename) =>
-        {
-            const content = obj(path.resolve(srcpath, basename));
-            acc[basename] = content;
-            return acc;
-        }
-        return files.reduce(f, {});
-    }
+    fs.stat(srcpath, (err, stats) => {
+        if (err) {
+            return cb(err);}
+        if (!stats.isDirectory()) {
+            if (!options.contents) {
+                return cb(null, '');}
+            return fs.readFile(srcpath, 'utf8', cb);}
+        fs.readdir(srcpath, (err, files) => {
+            if (err) {
+                return cb(err);}
+            async.reduce(files, {}, (acc, basename, reduce_cb) => {
+                obj(
+                    path.resolve(srcpath, basename),
+                    options,
+                    (err, content) => {
+                        if (err) {
+                            return cb(err);}
+                        acc[basename] = content;
+                        reduce_cb(null, acc);});}, cb);});});});
 
-    return fs.readFileSync(srcpath, 'utf8');
-}
-
-const yaml = srcpath =>
-{
-    return jsyaml.safeDump(obj(srcpath));
-}
+const yaml = vargs((srcpath, options, cb) => {
+    if (!options) {
+        options = {contents: true};}
+        
+    obj(srcpath, options, (err, res) => {
+        if (err) {
+            return cb(err);}
+        cb(null, jsyaml.safeDump(res));});});
 
 module.exports = {obj, yaml}
