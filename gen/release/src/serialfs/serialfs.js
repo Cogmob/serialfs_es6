@@ -19,7 +19,12 @@ var obj = vargs(function (srcpath, options, cb) {
             if (!options.contents) {
                 return cb(null, '');
             }
-            return fs.readFile(srcpath, 'utf8', cb);
+            return fs.readFile(srcpath, 'utf8', function (err, res) {
+                if (err) {
+                    cb(err);
+                }
+                cb(null, res.toString());
+            });
         }
         fs.readdir(srcpath, function (err, files) {
             if (err) {
@@ -28,7 +33,7 @@ var obj = vargs(function (srcpath, options, cb) {
             async.reduce(files, {}, function (acc, basename, reduce_cb) {
                 obj(path.resolve(srcpath, basename), options, function (err, content) {
                     if (err) {
-                        return cb(err);
+                        return reduce_cb(err);
                     }
                     acc[basename] = content;
                     reduce_cb(null, acc);

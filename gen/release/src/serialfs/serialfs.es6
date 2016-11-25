@@ -14,7 +14,10 @@ const obj = vargs((srcpath, options, cb) => {
         if (!stats.isDirectory()) {
             if (!options.contents) {
                 return cb(null, '');}
-            return fs.readFile(srcpath, 'utf8', cb);}
+            return fs.readFile(srcpath, 'utf8', (err, res) => {
+                if (err) {
+                    cb(err);}
+                cb(null, res.toString());});}
         fs.readdir(srcpath, (err, files) => {
             if (err) {
                 return cb(err);}
@@ -24,7 +27,7 @@ const obj = vargs((srcpath, options, cb) => {
                     options,
                     (err, content) => {
                         if (err) {
-                            return cb(err);}
+                            return reduce_cb(err);}
                         acc[basename] = content;
                         reduce_cb(null, acc);});}, cb);});});});
 

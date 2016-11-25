@@ -12,6 +12,8 @@ const serialfs = require('serialfs');
 
 serialfs.obj('subfolder', (err, res) => {
     console.log(res);}); // ["file1", "file2"]
+serialfs.obj('subfolder', {contents: false}, (err, res) => {
+    console.log(res);}); // ["", ""]"
 serialfs.yaml('subfolder', (err, res) => {
     console.log(res);}); // "- file1 \n- file2"
 ```
