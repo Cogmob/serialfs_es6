@@ -21,9 +21,9 @@ const obj = vargs((srcpath, contents, should_print_debug, cb) => {
                 return cb(err);}
             async.reduce(files, {}, (memo, basename, reduce_cb) => {
                 const c = sub_contents(contents, basename);
-                if (should_print_debug) {
-                    console.log(basename + ' contents: ' + (c !== false));
-                    console.log(c);}
+                //if (should_print_debug) {
+                //    console.log(basename + ' contents: ' + (c !== false));
+                //    console.log(c);}
                 obj(
                     path.resolve(srcpath, basename),
                     c,
