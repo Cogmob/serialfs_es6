@@ -36,7 +36,7 @@ const sub_contents = (contents, basename) => {
 
 const yaml = vargs((srcpath, contents, cb) => {
     if (typeof contents === undefined) contents = true;
-    obj(srcpath, contents=true, (err, res) => {
+    obj(srcpath, contents, (err, res) => {
         if (err) {
             return cb(err);}
         cb(null, jsyaml.safeDump(res));});});
