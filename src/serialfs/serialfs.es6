@@ -6,7 +6,9 @@ const vargs = require('vargs-callback');
 
 const obj = vargs((srcpath, contents, should_print_debug, cb) => {
     if (should_print_debug) {
-        console.log('obj');}
+        console.log('obj');
+        console.log(contents);
+        return cb();}
     if (typeof contents === undefined) contents = true;
     fs.stat(srcpath, (err, stats) => {
         if (err) {
