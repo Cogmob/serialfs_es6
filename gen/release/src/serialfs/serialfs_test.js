@@ -5,22 +5,53 @@ var serialfs = require('./serialfs');
 var path = require('path');
 
 test('test obj without contents', function (t) {
-    t.plan(1);
-    serialfs.obj(path.resolve(__dirname, 'data'), { contents: false }, function (err, res) {
-        t.deepEqual({ a: { b: { c: { d: '' } } }, ffff: '' }, res);
+    var cb = make_test_cb(t, function (generated) {
+        t.deepEqual({ a: { b: { c: { d: { e: { f: { g: { h: '' } } } } } } }, ffff: '' }, generated);
+        t.end();
     });
+
+    serialfs.obj(path.resolve(__dirname, 'data'), false, cb);
 });
 
 test('test obj', function (t) {
-    t.plan(1);
-    serialfs.obj(path.resolve(__dirname, 'data'), function (err, res) {
-        t.deepEqual({ a: { b: { c: { d: '' } } }, ffff: 'fkdjfkajsd\n' }, res);
+    var cb = make_test_cb(t, function (generated) {
+        t.deepEqual({ a: { b: { c: { d: { e: { f: { g: { h: 'second file contents\n' } } } } } } }, ffff: 'fkdjfkajsd\n' }, generated);
+        t.end();
     });
+
+    serialfs.obj(path.resolve(__dirname, 'data'), true, cb);
 });
 
 test('test yaml', function (t) {
-    t.plan(1);
-    serialfs.yaml(path.resolve(__dirname, 'data'), function (err, res) {
-        t.deepEqual('a:\n  b:\n    c:\n      d: \'\'\nffff: |\n  fkdjfkajsd\n', res);
+    var cb = make_test_cb(t, function (generated) {
+        t.deepEqual('a:\n  b:\n    c:\n      d:\n        e:\n          f:\n            g:\n              h: |\n                second file contents\nffff: |\n  fkdjfkajsd\n', generated);
+        t.end();
     });
+
+    serialfs.yaml(path.resolve(__dirname, 'data'), true, cb);
 });
+
+test('test subset contents', function (t) {
+    var cb = make_test_cb(t, function (generated) {
+        t.deepEqual('a:\n  b:\n    c:\n      d:\n        e:\n          f:\n            g:\n              h: |\n                second file contents\nffff: \'\'\n', generated);
+        t.end();
+    });
+
+    serialfs.yaml(path.resolve(__dirname, 'data'), { a: { b: { c: { d: { e: { f: { g: { h: true } } } } } } } }, cb);
+});
+
+var make_test_cb = function make_test_cb(t, compare_func) {
+    return function (err, generated) {
+        if (err) {
+            console.log(word_wrap(err.stack.replace(/\\/g, '\\ '), {
+                trim: true,
+                width: 80 }).split('\n').forEach(function (stack_line) {
+                console.log(stack_line.replace(/\\ /g, '\\').replace(/ at/g, '\nat').replace(/Error:/g, '\nError:'));
+            }));
+            t.fail();
+            return t.end();
+        }
+
+        return compare_func(generated);
+    };
+};
