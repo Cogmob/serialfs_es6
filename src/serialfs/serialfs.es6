@@ -34,7 +34,7 @@ const obj = vargs((srcpath, contents, recurse, should_print_debug, cb) => {
                         obj(
                             path.resolve(srcpath, basename),
                             sub_contents(contents, basename),
-                            sub_contents(recurse, basename),
+                            sub_recurse(recurse, basename),
                             should_print_debug,
                             (err, content) => {
                                 if (err) {
@@ -49,6 +49,11 @@ const sub_contents = (contents, basename) => {
     if (typeof contents !== 'object') return contents;
     if (basename in contents) return contents[basename];
     return false;};
+
+const sub_recurse = (contents, basename) => {
+    if (typeof contents !== 'object') return contents;
+    if (basename in contents) return contents[basename];
+    return true;};
 
 const yaml = vargs((srcpath, contents, recurse, should_print_debug, cb) => {
     obj(srcpath, contents, recurse, should_print_debug, (err, res) => {
