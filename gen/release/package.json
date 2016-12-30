@@ -1,6 +1,6 @@
 {
   "name": "serialfs",
-  "version": "0.0.19",
+  "version": "0.0.20",
   "description": "creates an object / string representation of a file system",
   "main": "src/serialfs/serialfs.js",
   "scripts": {
