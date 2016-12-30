@@ -27,6 +27,19 @@ test('test yaml', t => {
 
     serialfs.yaml(path.resolve(__dirname, 'data'), true, cb);});
 
+test('test subset', t => {
+    const cb = make_test_cb(t, (generated) => {
+        t.deepEqual(
+            'a:\n  b:\n    c:\n      d:\n        e: null\nffff: \'\'\n',
+            generated);
+        t.end();});
+
+    serialfs.yaml(
+        path.resolve(__dirname, 'data'),
+        false,
+        {a:{b:{c:{d:{e: false}}}}},
+        cb);});
+
 test('test subset contents', t => {
     const cb = make_test_cb(t, (generated) => {
         t.deepEqual(

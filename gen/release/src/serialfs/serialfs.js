@@ -8,13 +8,14 @@ var path = require('path');
 var jsyaml = require('js-yaml');
 var vargs = require('vargs-callback');
 
-var obj = vargs(function (srcpath, contents, should_print_debug, cb) {
+var obj = vargs(function (srcpath, contents, recurse, should_print_debug, cb) {
     if (should_print_debug) {
         console.log('obj');
         console.log(contents);
         return cb();
     }
-    if ((typeof contents === 'undefined' ? 'undefined' : _typeof(contents)) === undefined) contents = true;
+    if (contents === undefined) contents = true;
+    if (recurse === undefined) recurse = true;
     fs.stat(srcpath, function (err, stats) {
         if (err) {
             return cb(err);
@@ -40,13 +41,17 @@ var obj = vargs(function (srcpath, contents, should_print_debug, cb) {
                     console.log(basename + ' contents: ' + (c !== false));
                     console.log(c);
                 }
-                obj(path.resolve(srcpath, basename), c, function (err, content) {
-                    if (err) {
-                        return reduce_cb(err);
-                    }
-                    memo[basename] = content;
-                    reduce_cb(null, memo);
-                });
+                if (recurse) {
+                    obj(path.resolve(srcpath, basename), c, sub_contents(recurse, basename), function (err, content) {
+                        if (err) {
+                            return reduce_cb(err);
+                        }
+                        memo[basename] = content;
+                        reduce_cb(null, memo);
+                    });
+                } else {
+                    reduce_cb(null, null);
+                }
             }, cb);
         });
     });
@@ -58,9 +63,8 @@ var sub_contents = function sub_contents(contents, basename) {
     return false;
 };
 
-var yaml = vargs(function (srcpath, contents, cb) {
-    if ((typeof contents === 'undefined' ? 'undefined' : _typeof(contents)) === undefined) contents = true;
-    obj(srcpath, contents, function (err, res) {
+var yaml = vargs(function (srcpath, contents, recurse, should_print_debug, cb) {
+    obj(srcpath, contents, recurse, should_print_debug, function (err, res) {
         if (err) {
             return cb(err);
         }
