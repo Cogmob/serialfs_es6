@@ -35,13 +35,13 @@ var obj = vargs(function (srcpath, contents, recurse, should_print_debug, cb) {
             if (err) {
                 return cb(err);
             }
-            async.reduce(files, {}, function (memo, basename, reduce_cb) {
-                var c = sub_contents(contents, basename);
-                if (should_print_debug) {
-                    console.log(basename + ' contents: ' + (c !== false));
-                    console.log(c);
-                }
-                if (recurse) {
+            if (recurse) {
+                async.reduce(files, {}, function (memo, basename, reduce_cb) {
+                    var c = sub_contents(contents, basename);
+                    if (should_print_debug) {
+                        console.log(basename + ' contents: ' + (c !== false));
+                        console.log(c);
+                    }
                     obj(path.resolve(srcpath, basename), c, sub_contents(recurse, basename), function (err, content) {
                         if (err) {
                             return reduce_cb(err);
@@ -49,10 +49,10 @@ var obj = vargs(function (srcpath, contents, recurse, should_print_debug, cb) {
                         memo[basename] = content;
                         reduce_cb(null, memo);
                     });
-                } else {
-                    reduce_cb(null, null);
-                }
-            }, cb);
+                }, cb);
+            } else {
+                cb(null, null);
+            }
         });
     });
 });
