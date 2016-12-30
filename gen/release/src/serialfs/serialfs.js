@@ -10,9 +10,11 @@ var vargs = require('vargs-callback');
 
 var obj = vargs(function (srcpath, contents, recurse, should_print_debug, cb) {
     if (should_print_debug) {
-        console.log('obj');
+        console.log('- contents:');
         console.log(contents);
-        return cb();
+        console.log('- recurse:');
+        console.log(jsyaml.safeDump(recurse));
+        console.log(' ');
     }
     if (contents === undefined) contents = true;
     if (recurse === undefined) recurse = true;
@@ -37,12 +39,7 @@ var obj = vargs(function (srcpath, contents, recurse, should_print_debug, cb) {
             }
             if (recurse) {
                 async.reduce(files, {}, function (memo, basename, reduce_cb) {
-                    var c = sub_contents(contents, basename);
-                    if (should_print_debug) {
-                        console.log(basename + ' contents: ' + (c !== false));
-                        console.log(c);
-                    }
-                    obj(path.resolve(srcpath, basename), c, sub_contents(recurse, basename), function (err, content) {
+                    obj(path.resolve(srcpath, basename), sub_contents(contents, basename), sub_contents(recurse, basename), should_print_debug, function (err, content) {
                         if (err) {
                             return reduce_cb(err);
                         }

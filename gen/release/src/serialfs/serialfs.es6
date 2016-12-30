@@ -6,9 +6,11 @@ const vargs = require('vargs-callback');
 
 const obj = vargs((srcpath, contents, recurse, should_print_debug, cb) => {
     if (should_print_debug) {
-        console.log('obj');
+        console.log('- contents:');
         console.log(contents);
-        return cb();}
+        console.log('- recurse:');
+        console.log(jsyaml.safeDump(recurse) );
+        console.log(' ');}
     if (contents === undefined) contents = true;
     if (recurse === undefined) recurse = true;
     fs.stat(srcpath, (err, stats) => {
@@ -25,20 +27,21 @@ const obj = vargs((srcpath, contents, recurse, should_print_debug, cb) => {
             if (err) {
                 return cb(err);}
             if (recurse) {
-                async.reduce(files, {}, (memo, basename, reduce_cb) => {
-                    const c = sub_contents(contents, basename);
-                    if (should_print_debug) {
-                        console.log(basename + ' contents: ' + (c !== false));
-                        console.log(c);}
-                    obj(
-                        path.resolve(srcpath, basename),
-                        c,
-                        sub_contents(recurse, basename),
-                        (err, content) => {
-                            if (err) {
-                                return reduce_cb(err);}
-                            memo[basename] = content;
-                            reduce_cb(null, memo);});}, cb);}
+                async.reduce(
+                    files,
+                    {},
+                    (memo, basename, reduce_cb) => {
+                        obj(
+                            path.resolve(srcpath, basename),
+                            sub_contents(contents, basename),
+                            sub_contents(recurse, basename),
+                            should_print_debug,
+                            (err, content) => {
+                                if (err) {
+                                    return reduce_cb(err);}
+                                memo[basename] = content;
+                                reduce_cb(null, memo);});},
+                    cb);}
             else {
                 cb(null, null);}});});});
 

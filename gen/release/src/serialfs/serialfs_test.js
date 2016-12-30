@@ -37,7 +37,7 @@ test('test subset', function (t) {
         t.end();
     });
 
-    serialfs.yaml(path.resolve(__dirname, 'data'), false, { a: { b: { c: { d: { e: false } } } } }, cb);
+    serialfs.yaml(path.resolve(__dirname, 'data'), false, { a: { b: { c: { d: { e: false } } } } }, true, cb);
 });
 
 test('test subset contents', function (t) {

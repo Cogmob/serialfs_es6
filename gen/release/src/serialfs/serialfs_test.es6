@@ -38,6 +38,7 @@ test('test subset', t => {
         path.resolve(__dirname, 'data'),
         false,
         {a:{b:{c:{d:{e: false}}}}},
+        true,
         cb);});
 
 test('test subset contents', t => {
