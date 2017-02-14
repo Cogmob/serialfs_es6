@@ -6,7 +6,7 @@ var path = require('path');
 
 test('test obj without contents', function (t) {
     var cb = make_test_cb(t, function (generated) {
-        t.deepEqual({ a: { b: { c: { d: { e: { f: { g: { h: '' } } } } } } }, ffff: '' }, generated);
+        t.deepEqual({ 1: { 2: { 3: { 4: '' } } }, a: { b: { c: { d: { e: { f: { g: { h: '' } } } } } } }, ffff: '' }, generated);
         t.end();
     });
 
@@ -15,7 +15,7 @@ test('test obj without contents', function (t) {
 
 test('test obj', function (t) {
     var cb = make_test_cb(t, function (generated) {
-        t.deepEqual({ a: { b: { c: { d: { e: { f: { g: { h: 'second file contents\n' } } } } } } }, ffff: 'fkdjfkajsd\n' }, generated);
+        t.deepEqual({ 1: { 2: { 3: { 4: 'new\n' } } }, a: { b: { c: { d: { e: { f: { g: { h: 'second file contents\n' } } } } } } }, ffff: 'fkdjfkajsd\n' }, generated);
         t.end();
     });
 
@@ -24,7 +24,7 @@ test('test obj', function (t) {
 
 test('test yaml', function (t) {
     var cb = make_test_cb(t, function (generated) {
-        t.deepEqual('a:\n  b:\n    c:\n      d:\n        e:\n          f:\n            g:\n              h: |\n                second file contents\nffff: |\n  fkdjfkajsd\n', generated);
+        t.deepEqual('\'1\':\n  \'2\':\n    \'3\':\n      \'4\': |\n        new\na:\n  b:\n    c:\n      d:\n        e:\n          f:\n            g:\n              h: |\n                second file contents\nffff: |\n  fkdjfkajsd\n', generated);
         t.end();
     });
 
@@ -33,16 +33,16 @@ test('test yaml', function (t) {
 
 test('test subset', function (t) {
     var cb = make_test_cb(t, function (generated) {
-        t.deepEqual('a:\n  b:\n    c:\n      d:\n        e: null\nffff: \'\'\n', generated);
+        t.deepEqual('\'1\':\n  \'2\':\n    \'3\':\n      \'4\': \'\'\na:\n  b:\n    c:\n      d:\n        e: null\nffff: \'\'\n', generated);
         t.end();
     });
 
-    serialfs.yaml(path.resolve(__dirname, 'data'), false, { a: { b: { c: { d: { e: false } } } } }, true, cb);
+    serialfs.yaml(path.resolve(__dirname, 'data'), false, { a: { b: { c: { d: { e: false } } } } }, cb);
 });
 
 test('test subset contents', function (t) {
     var cb = make_test_cb(t, function (generated) {
-        t.deepEqual('a:\n  b:\n    c:\n      d:\n        e:\n          f:\n            g:\n              h: |\n                second file contents\nffff: \'\'\n', generated);
+        t.deepEqual('\'1\':\n  \'2\':\n    \'3\':\n      \'4\': \'\'\na:\n  b:\n    c:\n      d:\n        e:\n          f:\n            g:\n              h: |\n                second file contents\nffff: \'\'\n', generated);
         t.end();
     });
 
@@ -64,3 +64,21 @@ var make_test_cb = function make_test_cb(t, compare_func) {
         return compare_func(generated);
     };
 };
+
+test('test list', function (t) {
+    var cb = make_test_cb(t, function (generated) {
+        t.deepEqual([{ path: '1/2/3/4', contents: 'new\n' }, { path: 'a/b/c/d/e/f/g/h', contents: 'second file contents\n' }, { path: 'ffff', contents: 'fkdjfkajsd\n' }], generated);
+        t.end();
+    });
+
+    serialfs.list(path.resolve(__dirname, 'data'), true, cb);
+});
+
+test('test yaml', function (t) {
+    var cb = make_test_cb(t, function (generated) {
+        t.deepEqual('\'1\':\n  \'2\':\n    \'3\':\n      \'4\': |\n        new\na:\n  b:\n    c:\n      d:\n        e:\n          f:\n            g:\n              h: |\n                second file contents\nffff: |\n  fkdjfkajsd\n', generated);
+        t.end();
+    });
+
+    serialfs.yaml(path.resolve(__dirname, 'data'), true, cb);
+});

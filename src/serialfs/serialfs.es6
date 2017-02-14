@@ -61,4 +61,20 @@ const yaml = vargs((srcpath, contents, recurse, should_print_debug, cb) => {
             return cb(err);}
         cb(null, jsyaml.safeDump(res));});});
 
-module.exports = {obj, yaml}
+const tree_to_list = (tree, path) => {
+    if (typeof tree === 'string') {
+        return [{
+            'path': path.join('/'),
+            'contents': tree}];}
+    var ret = [];
+    for (var key in tree) {
+        ret = ret.concat(tree_to_list(tree[key], path.concat(key)));}
+    return ret;}
+
+const list = vargs((srcpath, contents, recurse, should_print_debug, cb) => {
+    obj(srcpath, contents, recurse, should_print_debug, (err, res) => {
+        if (err) {
+            return cb(err);}
+        cb(null, tree_to_list(res, []));});});
+
+module.exports = {obj, yaml, list}

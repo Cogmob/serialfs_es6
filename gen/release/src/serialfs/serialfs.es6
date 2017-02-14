@@ -34,7 +34,7 @@ const obj = vargs((srcpath, contents, recurse, should_print_debug, cb) => {
                         obj(
                             path.resolve(srcpath, basename),
                             sub_contents(contents, basename),
-                            sub_contents(recurse, basename),
+                            sub_recurse(recurse, basename),
                             should_print_debug,
                             (err, content) => {
                                 if (err) {
@@ -50,10 +50,31 @@ const sub_contents = (contents, basename) => {
     if (basename in contents) return contents[basename];
     return false;};
 
+const sub_recurse = (contents, basename) => {
+    if (typeof contents !== 'object') return contents;
+    if (basename in contents) return contents[basename];
+    return true;};
+
 const yaml = vargs((srcpath, contents, recurse, should_print_debug, cb) => {
     obj(srcpath, contents, recurse, should_print_debug, (err, res) => {
         if (err) {
             return cb(err);}
         cb(null, jsyaml.safeDump(res));});});
 
-module.exports = {obj, yaml}
+const tree_to_list = (tree, path) => {
+    if (typeof tree === 'string') {
+        return [{
+            'path': path.join('/'),
+            'contents': tree}];}
+    var ret = [];
+    for (var key in tree) {
+        ret = ret.concat(tree_to_list(tree[key], path.concat(key)));}
+    return ret;}
+
+const list = vargs((srcpath, contents, recurse, should_print_debug, cb) => {
+    obj(srcpath, contents, recurse, should_print_debug, (err, res) => {
+        if (err) {
+            return cb(err);}
+        cb(null, tree_to_list(res, []));});});
+
+module.exports = {obj, yaml, list}

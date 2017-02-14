@@ -39,7 +39,7 @@ var obj = vargs(function (srcpath, contents, recurse, should_print_debug, cb) {
             }
             if (recurse) {
                 async.reduce(files, {}, function (memo, basename, reduce_cb) {
-                    obj(path.resolve(srcpath, basename), sub_contents(contents, basename), sub_contents(recurse, basename), should_print_debug, function (err, content) {
+                    obj(path.resolve(srcpath, basename), sub_contents(contents, basename), sub_recurse(recurse, basename), should_print_debug, function (err, content) {
                         if (err) {
                             return reduce_cb(err);
                         }
@@ -60,6 +60,12 @@ var sub_contents = function sub_contents(contents, basename) {
     return false;
 };
 
+var sub_recurse = function sub_recurse(contents, basename) {
+    if ((typeof contents === 'undefined' ? 'undefined' : _typeof(contents)) !== 'object') return contents;
+    if (basename in contents) return contents[basename];
+    return true;
+};
+
 var yaml = vargs(function (srcpath, contents, recurse, should_print_debug, cb) {
     obj(srcpath, contents, recurse, should_print_debug, function (err, res) {
         if (err) {
@@ -69,4 +75,26 @@ var yaml = vargs(function (srcpath, contents, recurse, should_print_debug, cb) {
     });
 });
 
-module.exports = { obj: obj, yaml: yaml };
+var tree_to_list = function tree_to_list(tree, path) {
+    if (typeof tree === 'string') {
+        return [{
+            'path': path.join('/'),
+            'contents': tree }];
+    }
+    var ret = [];
+    for (var key in tree) {
+        ret = ret.concat(tree_to_list(tree[key], path.concat(key)));
+    }
+    return ret;
+};
+
+var list = vargs(function (srcpath, contents, recurse, should_print_debug, cb) {
+    obj(srcpath, contents, recurse, should_print_debug, function (err, res) {
+        if (err) {
+            return cb(err);
+        }
+        cb(null, tree_to_list(res, []));
+    });
+});
+
+module.exports = { obj: obj, yaml: yaml, list: list };
