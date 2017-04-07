@@ -4,20 +4,27 @@ const path = require('path');
 const jsyaml = require('js-yaml');
 const vargs = require('vargs-callback');
 
-const obj = vargs((srcpath, contents, recurse, should_print_debug, cb) => {
-    if (should_print_debug) {
-        console.log('- contents:');
-        console.log(contents);
-        console.log('- recurse:');
-        console.log(jsyaml.safeDump(recurse) );
+//    if (options) {
+//        if ('should_read_file_contents' in options) {
+//            contents = options.should_read_file_contents;}
+//        if ('should_recurse' in options) {
+//            recurse = options.should_recurse;}
+//        if ('should_print_debug_statements') {
+//            should_print_debug = options.should_print_debug_statements;}}
+
+const obj_r = vargs((srcpath, options, cb) => {
+    if (options.should_print_debug) {
+        console.log('- options:');
+        console.log(options);
         console.log(' ');}
-    if (contents === undefined) contents = true;
-    if (recurse === undefined) recurse = true;
+    if (options.should_read_file_contents === undefined)
+        options.should_read_file_contents = true;
+    if (options.should_recurse === undefined) options.should_recurse = true;
     fs.stat(srcpath, (err, stats) => {
         if (err) {
             return cb(err);}
         if (!stats.isDirectory()) {
-            if (contents === false) {
+            if (options.should_read_file_contents === false) {
                 return cb(null, '');}
             return fs.readFile(srcpath, 'utf8', (err, res) => {
                 if (err) {
@@ -26,16 +33,22 @@ const obj = vargs((srcpath, contents, recurse, should_print_debug, cb) => {
         fs.readdir(srcpath, (err, files) => {
             if (err) {
                 return cb(err);}
-            if (recurse) {
+            if (options.should_recurse) {
                 async.reduce(
                     files,
                     {},
                     (memo, basename, reduce_cb) => {
-                        obj(
+                        const new_options = {
+                            should_read_file_contents: sub_contents(
+                                options.should_read_file_contents,
+                                basename),
+                            should_recurse: sub_recurse(
+                                options.should_recurse,
+                                basename),
+                            should_print_debug: options.should_print_debug};
+                        obj_r(
                             path.resolve(srcpath, basename),
-                            sub_contents(contents, basename),
-                            sub_recurse(recurse, basename),
-                            should_print_debug,
+                            new_options,
                             (err, content) => {
                                 if (err) {
                                     return reduce_cb(err);}
@@ -55,12 +68,6 @@ const sub_recurse = (contents, basename) => {
     if (basename in contents) return contents[basename];
     return true;};
 
-const yaml = vargs((srcpath, contents, recurse, should_print_debug, cb) => {
-    obj(srcpath, contents, recurse, should_print_debug, (err, res) => {
-        if (err) {
-            return cb(err);}
-        cb(null, jsyaml.safeDump(res));});});
-
 const tree_to_list = (tree, path) => {
     if (typeof tree === 'string') {
         return [{
@@ -71,10 +78,33 @@ const tree_to_list = (tree, path) => {
         ret = ret.concat(tree_to_list(tree[key], path.concat(key)));}
     return ret;}
 
-const list = vargs((srcpath, contents, recurse, should_print_debug, cb) => {
-    obj(srcpath, contents, recurse, should_print_debug, (err, res) => {
-        if (err) {
-            return cb(err);}
-        cb(null, tree_to_list(res, []));});});
+const obj = (srcpath, options, cb) => {
+    if (cb) {
+        return obj_r(srcpath, options, (err, res) => {
+            if (err) {
+                return cb(err);}
+            cb(null, res);});}
+    return new Promise((resolve, reject) => {
+        obj_r(srcpath, options, (err, data) => {
+            if (err !== null) return reject(err);
+            resolve(data);});});};
+
+const yaml = (srcpath, options, cb) => {
+    if (cb) {
+        return obj_r(srcpath, options, (err, res) => {
+            if (err) {
+                return cb(err);}
+            cb(null, jsyaml.safeDump(res));});}
+    return obj(srcpath, options).then((res) => {
+        return Promise.resolve(jsyaml.safeDump(res));});};
+
+const list = (srcpath, options, cb) => {
+    if (cb) {
+        return obj_r(srcpath, options, (err, res) => {
+            if (err) {
+                return cb(err);}
+            cb(null, tree_to_list(res, []));});}
+    return obj(srcpath, options).then((res) => {
+        return Promise.resolve(tree_to_list(res, []));});};
 
 module.exports = {obj, yaml, list}

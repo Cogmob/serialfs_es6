@@ -16,6 +16,9 @@ serialfs.obj('subfolder', {contents: false}, (err, res) => {
     console.log(res);}); // ["", ""]"
 serialfs.yaml('subfolder', (err, res) => {
     console.log(res);}); // "- file1 \n- file2"
+
+serialfs.obj('subfolder').then((res) => {
+    console.log(res);}).catch((err) => true);
 ```
 
 If present, the second and third parameter specify whether serialfs should
