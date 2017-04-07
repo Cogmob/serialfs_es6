@@ -26,29 +26,29 @@ the second parameter is the options object. specify behvior with the following:
 
 ### should_recurse
 
-if this is true, will recurse into all subfolders
-if this is false, will not recurse into any subfolders
+if this is true, will recurse into all subfolders\
+if this is false, will not recurse into any subfolders\
 if this is an object, will look for the current folder's name
 - if found, will recurse into the folder in the object and the file system and repeat
 - if not found, will recurse into the folder
 
 ### should_read_file_contents
 
-if this is true, will read the contents of the files
-if this is false, will not read the contents of the files
+if this is true, will read the contents of the files\
+if this is false, will not read the contents of the files\
 if this is an object, will look for the current folder's name
 - if found, will recurse into the folder in the object and the file system and repeat
 - if not found, will recurse into the folder
 
 ### example
-if the file structure is:
-{a: {b: 'text1', c: 'text2'}, d: {e: 'text3:, f: 'text4'}}
-the recurse object is:
-{a: {b: true}}
-and the read file object is:
-{a: {d: false}}
+if the file structure is:\
+{a: {b: 'text1', c: 'text2'}, d: {e: 'text3:, f: 'text4'}}\
+the recurse object is:\
+{a: {b: true}}\
+and the read file object is:\
+{a: {d: false}}\
 
-the result would be:
+the result would be:\
 {a: {b: 'text1', c: ''}, d: null}
 
 ### should_print_debug
