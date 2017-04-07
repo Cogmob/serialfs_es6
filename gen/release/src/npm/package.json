@@ -1,6 +1,6 @@
 {
   "name": "serialfs",
-  "version": "0.0.24",
+  "version": "0.0.25",
   "description": "creates an object / string representation of a file system",
   "main": "src/serialfs/serialfs.js",
   "scripts": {
@@ -8,7 +8,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "-"
+    "url": "git@github.com:Cogmob/serialfs_es6.git"
   },
   "keywords": [
     "-"
@@ -42,9 +42,5 @@
   "dependencies": {
     "async": "^2.1.4",
     "js-yaml": "^3.6.1"
-  },
-  "repository": {
-      "type": "git",
-      "url": "git@github.com:Cogmob/serialfs_es6.git"
   }
 }

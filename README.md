@@ -1,4 +1,4 @@
-creates an object / string representation of a file system recursively. Useful for writing unit tests for a utility that modifies files
+creates an object / string representation of a file system recursively. useful for writing unit tests for a utility that modifies files
 
 # usage
 
@@ -53,4 +53,4 @@ the result would be:
 
 ### should_print_debug
 
-Will send extra information to standard out, to help understand what's happening
+will send extra information to standard out, to help understand what's happening
