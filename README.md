@@ -1,21 +1,21 @@
-creates an object / string representation of a file system recursively. useful for writing unit tests for a utility that modifies files
+creates an object / string representation of a file system recursively
 
 # usage
-
-```shell
-npm install --save serialfs
-```
 
 ```javascript
 const serialfs = require('serialfs');
 
+// callback style
 serialfs.obj('subfolder', (err, res) => {
-    console.log(res);}); // ["file1", "file2"]
-serialfs.obj('subfolder', {should_read_file_contents: false}, (err, res) => {
-    console.log(res);}); // ["", ""]"
-serialfs.yaml('subfolder', (err, res) => {
-    console.log(res);}); // "- file1 \n- file2"
+    console.log(res);}); // {"file1": "contents", "file2": "contents"}
 
+serialfs.obj('subfolder', {should_read_file_contents: false}, (err, res) => {
+    console.log(res);}); // {"file1": "", "file2":""}
+
+serialfs.yaml('subfolder', (err, res) => {
+    console.log(res);}); // "file1: '' \nfile2: ''"
+
+// promise style
 serialfs.obj('subfolder').then((res) => {
     console.log(res);}).catch((err) => true);
 ```
@@ -54,3 +54,9 @@ the result would be:
 ### should_print_debug
 
 will send extra information to standard out, to help understand what's happening
+
+## installation
+
+```shell
+npm install --save serialfs
+```
