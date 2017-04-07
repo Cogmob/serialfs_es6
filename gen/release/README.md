@@ -1,5 +1,4 @@
-Creates an object / string representation of a file system recursively. Useful
-for writing unit tests for a utility that modifies files.
+creates an object / string representation of a file system recursively. Useful for writing unit tests for a utility that modifies files
 
 # usage
 
@@ -12,24 +11,46 @@ const serialfs = require('serialfs');
 
 serialfs.obj('subfolder', (err, res) => {
     console.log(res);}); // ["file1", "file2"]
-serialfs.obj('subfolder', {contents: false}, (err, res) => {
+serialfs.obj('subfolder', {should_read_file_contents: false}, (err, res) => {
     console.log(res);}); // ["", ""]"
 serialfs.yaml('subfolder', (err, res) => {
     console.log(res);}); // "- file1 \n- file2"
+
+serialfs.obj('subfolder').then((res) => {
+    console.log(res);}).catch((err) => true);
 ```
 
-If present, the second and third parameter specify whether serialfs should
-return the file contents, and whether serialfs should recurse into sub folders.
+## options
 
-By default, serialfs does not return the file contents but does recurse into all
-subfolders. This behaviour can be overridden but these parameters.
+the second parameter is the options object. specify behvior with the following:
 
-For example if the file structure is:
+### should_recurse
+
+if this is true, will recurse into all subfolders
+if this is false, will not recurse into any subfolders
+if this is an object, will look for the current folder's name
+- if found, will recurse into the folder in the object and the file system and repeat
+- if not found, will recurse into the folder
+
+### should_read_file_contents
+
+if this is true, will read the contents of the files
+if this is false, will not read the contents of the files
+if this is an object, will look for the current folder's name
+- if found, will recurse into the folder in the object and the file system and repeat
+- if not found, will recurse into the folder
+
+### example
+if the file structure is:
 {a: {b: 'text1', c: 'text2'}, d: {e: 'text3:, f: 'text4'}}
-the second parameter is:
+the recurse object is:
 {a: {b: true}}
-and the third parameter is:
+and the read file object is:
 {a: {d: false}}
 
 the result would be:
 {a: {b: 'text1', c: ''}, d: null}
+
+### should_print_debug
+
+Will send extra information to standard out, to help understand what's happening
