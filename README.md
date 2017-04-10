@@ -43,7 +43,7 @@ if this is an object, will look for the current folder's name
 ### example
 if the file structure is:
 ```json
-{"a": {"b": "text1", "c": "text2"}, "d": {"e": "text3:, "f": "text4"}}
+{"a": {"b": "text1", "c": "text2"}, "d": {"e": "text3", "f": "text4"}}
 ```
 the recurse object is:
 ```json
