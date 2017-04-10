@@ -1,4 +1,4 @@
-creates an object / string representation of a file system recursively
+creates an object / string representation of files and folders
 
 # usage
 
@@ -41,15 +41,25 @@ if this is an object, will look for the current folder's name
 - if not found, will recurse into the folder
 
 ### example
-if the file structure is:\
-{a: {b: 'text1', c: 'text2'}, d: {e: 'text3:, f: 'text4'}}\
-the recurse object is:\
-{a: {b: true}}\
-and the read file object is:\
-{a: {d: false}}\
+if the file structure is:
+```javascript
+{a: {b: 'text1', c: 'text2'}, d: {e: 'text3:, f: 'text4'}}
+```
 
-the result would be:\
+the recurse object is:
+```javascript
+{a: {b: true}}
+```
+
+and the read file object is:
+```javascript
+{a: {d: false}}
+```
+
+the result would be:
+```javascript
 {a: {b: 'text1', c: ''}, d: null}
+```
 
 ### should_print_debug
 
