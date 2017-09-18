@@ -42,23 +42,20 @@ if this is an object, will look for the current folder's name
 
 ### example
 if the file structure is:
-```javascript
-{a: {b: 'text1', c: 'text2'}, d: {e: 'text3:, f: 'text4'}}
+```json
+{"a": {"b": "text1", "c": "text2"}, "d": {"e": "text3", "f": "text4"}}
 ```
-
 the recurse object is:
-```javascript
-{a: {b: true}}
+```json
+{"a": {"b": true}}
 ```
-
 and the read file object is:
-```javascript
-{a: {d: false}}
+```json
+{"a": {"d": false}}
 ```
-
 the result would be:
-```javascript
-{a: {b: 'text1', c: ''}, d: null}
+```json
+{"a": {"b": "text1", "c": ""}, "d": null}
 ```
 
 ### should_print_debug
