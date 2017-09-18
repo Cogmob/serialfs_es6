@@ -30,9 +30,7 @@ const run_test_promise = (t, compare_func, promise) => {
                     .replace(/ at/g, '\nat')
                     .replace(/Error:/g, '\nError:'));}));
             t.fail();
-            return t.end();}
-        
-        return compare_func(generated);}).then(res => compare_func(res));};
+            return t.end();}}).then(res => compare_func(res));};
 
 test('test obj without contents', t => {
     const cb = make_test_cb(t, (generated) => {
